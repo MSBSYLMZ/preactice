@@ -7,11 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model user {
+  id            Int        @id @default(autoincrement())
+  username      String     @unique
+  first_name    String     @db.VarChar(50)
+  last_name     String     @db.VarChar(50)
+  password      String     @db.VarChar(255)
+  email         String?    @db.VarChar(255)
+  date_of_birth DateTime?  @db.Date
+  profile_photo String?    @db.Text
+  bio           String?    @db.Text
+  question      question[]
+}
+
 model question {
-  id    Int     @id @default(autoincrement())
-  text  String  @db.VarChar(255)
-  media String?
-  // creator Int? @relation(fields: [user_id], references: [id])
+  id        Int     @id @default(autoincrement())
+  text      String  @db.VarChar(255)
+  media     String?
+  creator   user?   @relation(fields: [creatorId], references: [id])
+  creatorId Int
   // deleted    Boolean  @default(false)
   // created_at DateTime @default(now())
   // updated_at DateTime @default(now())
