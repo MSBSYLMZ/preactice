@@ -52,7 +52,6 @@ const AddQuestion: NextPage = () => {
 			id: "Question:5",
 			fields: {
 				creator(cachedCreator, { readField }) {
-					console.log(readField("id", {cachedCreator}));
 					return { __ref: "User:2", first_name: "Musab" };
 				},
 			},
@@ -74,10 +73,11 @@ const AddQuestion: NextPage = () => {
 		const value: string = e.target.value;
 		setForm({ ...form, [key]: value });
 	};
+	console.log(questionData);
 	const questions = questionData?.questions.map((question: QuestionType) => (
 		<div key={question.id}>
 			{question.text}
-			{question.creator.first_name}
+			{question.creator?.first_name}
 		</div>
 	));
 	if (questionsError) {

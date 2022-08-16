@@ -7,36 +7,91 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id            Int        @id @default(autoincrement())
-  username      String     @unique
-  first_name    String     @db.VarChar(50)
-  last_name     String     @db.VarChar(50)
-  password      String     @db.VarChar(255)
-  email         String?    @db.VarChar(255)
-  date_of_birth DateTime?  @db.Date
-  profile_photo String?    @db.Text
-  bio           String?    @db.Text
-  question      question[]
+enum Privacy {
+  private
+  public
+  protected
 }
 
-model question {
-  id        Int     @id @default(autoincrement())
-  text      String  @db.VarChar(255)
-  media     String?
-  creator   user?   @relation(fields: [creatorId], references: [id])
-  creatorId Int
-  // deleted    Boolean  @default(false)
-  // created_at DateTime @default(now())
-  // updated_at DateTime @default(now())
-  // deleted_at DateTime
+enum Status {
+  approved
+  pending
+  rejected
 }
 
-model puzzle_img {
-  id  Int    @id @default(autoincrement())
-  url String
-  // deleted    Boolean  @default(false)
-  // created_at DateTime @default(now())
-  // updated_at DateTime @default(now())
-  // deleted_at DateTime
+model User {
+  id                Int         @id @default(autoincrement())
+  username          String      @unique
+  first_name        String      @db.VarChar(50)
+  last_name         String      @db.VarChar(50)
+  password          String      @db.VarChar(255)
+  email             String?     @db.VarChar(255)
+  date_of_birth     DateTime?   @db.Date
+  profile_photo     String?     @db.Text
+  bio               String?     @db.Text
+  questions         Question[]
+  puzzle_images     PuzzleImg[]
+  sent_messages     Message[]   @relation("SentMessages")
+  received_messages Message[]   @relation("ReceivedMessages")
+  classrooms        Classroom[]
+  gallery           Gallery?
+}
+
+model Question {
+  id         Int      @id @default(autoincrement())
+  text       String   @db.VarChar(255)
+  media      String?
+  creator    User?    @relation(fields: [creator_id], references: [id])
+  creator_id Int?
+  status     Status?
+  privacy    Privacy  @default(public)
+  deleted    Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  deleted_at DateTime? 
+}
+
+model PuzzleImg {
+  id         Int      @id @default(autoincrement())
+  media      String?
+  creator    User?    @relation(fields: [creator_id], references: [id])
+  creator_id Int?
+  status     Status?
+  privacy    Privacy  @default(public)
+  deleted    Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @default(now())
+  deleted_at DateTime?
+}
+
+model Message {
+  id            Int       @id @default(autoincrement())
+  Sender        User      @relation("SentMessages", fields: [sender_id], references: [id])
+  Recipient     User      @relation("ReceivedMessages", fields: [recipient_id], references: [id])
+  sender_id     Int
+  recipient_id  Int
+  seen          Boolean   @default(false)
+  received      Boolean   @default(false)
+  received_date DateTime?
+  seen_date     DateTime?
+  message       String    @db.Text
+}
+
+model Classroom {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String
+  privacy     Privacy  @default(private)
+  creator     User     @relation(fields: [creator_id], references: [id])
+  creator_id  Int
+  deleted     Boolean  @default(false)
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+  deleted_at  DateTime?
+}
+
+model Gallery {
+  id       Int  @id @default(autoincrement())
+  owner    User @relation(fields: [owner_id], references: [id])
+  owner_id Int  @unique
 }

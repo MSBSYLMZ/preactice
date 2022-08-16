@@ -10,7 +10,7 @@ export const config = {
 		bodyParser: false,
 	},
 };
-const server = new ApolloServer({ schema, context: createContext });
+export const server = new ApolloServer({ schema, context: createContext });
 
 const startServer = server.start();
 
@@ -19,7 +19,7 @@ export default cors(async function handler(req, res) {
 		res.end();
 		return false;
 	}
-	console.log("We got request ");
+	// console.log("We got request ");
 	await startServer;
 	await server.createHandler({ path: "/api/graphql" })(req, res);
 });

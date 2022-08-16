@@ -26,6 +26,6 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "jest.config.js"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "jest.config.ts", "__test__/api/question/question.integation.test.js", "__test__/api/question/question.integation.test.js"],
   "exclude": ["node_modules"]
 }
