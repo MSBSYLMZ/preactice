@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "jest",
+    "test": "jest --config jest.config.js",
     "test-watch": "jest --watch"
   },
   "dependencies": {
@@ -29,6 +29,7 @@
     "@types/react": "18.0.17",
     "@types/react-dom": "18.0.6",
     "autoprefixer": "^10.4.8",
+    "cypress": "^10.4.0",
     "eslint": "8.21.0",
     "eslint-config-next": "12.2.5",
     "jest": "^28.1.3",

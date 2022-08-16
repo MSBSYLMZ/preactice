@@ -1,9 +1,8 @@
 import { makeSchema } from "nexus";
-import QuestionSchema from "./question/question.schema";
+import * as types from "./types";
 
 const schema = makeSchema({
-	types: [QuestionSchema],
-
+	types,
 });
 
 export default schema;
