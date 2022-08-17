@@ -28,3 +28,117 @@ a {
 		background: black;
 	}
 }
+
+
+
+/* TODO: move this to the their place*/
+.option{
+    font-size: 25px;
+    border: 4px solid #E04DB0;
+    width: 50px;
+    display: inline-block;
+    padding: 10px;
+    margin: 25px;
+    cursor: pointer;
+    user-select:none;
+    border-radius: 5px;
+    -webkit-box-shadow: 10px 11px 40px -8px rgba(59,16,59,0.82);
+    -moz-box-shadow: 10px 11px 40px -8px rgba(59,16,59,0.82);
+    box-shadow: 10px 11px 40px -8px rgba(59,16,59,0.82);
+}
+.option.active {
+    background-color: #F2C9E1;
+    color: #5902EC;
+}
+.option.wrong{
+    background-color: #E60965;
+}
+.option.right {
+    background-color: #1BF523;
+}
+@media only screen and (max-width: 800px){
+    .option{
+        font-size: 16px;
+        width: 40px;
+        padding: 3px;
+        margin: 25px;
+    }
+}
+@media only screen and (max-width: 450px){
+    .option{
+        margin: 5px 10px;
+    }
+}
+@media only screen and (max-width: 334px){
+    .option{
+        margin: 5px 25px;
+    }
+}
+@media only screen and (max-width: 250px){
+    .option{
+        margin: 5px 10px;
+    }
+}
+
+.question-section{
+    width: 45%;
+    margin: 10vh 25px 25px 25px;
+}
+.flex-container {
+    display: flex;
+    justify-content:  space-between;
+}
+.flex-container button{
+    margin: 25px 0 ;
+}
+.questions{
+    border: 3px solid #F2C9E1;
+    border-bottom-left-radius:15px;
+    border-bottom-right-radius:15px;
+    width: 100%;
+    color: #f7f7f7;
+    -webkit-box-shadow: 10px 11px 40px -8px rgba(59,16,59,0.82);
+    -moz-box-shadow: 10px 11px 40px -8px rgba(59,16,59,0.82);
+    box-shadow: 10px 11px 40px -8px rgba(59,16,59,0.82);
+}
+@media only screen and (max-width: 800px){
+    .question-section{
+        width: 90%;
+        margin: 0 4%;
+        font-size: 13px;
+    }
+}
+
+.question-title{
+    font-size: 36px;
+    color: #FF3F00;
+    margin: 10px;
+}
+.question{
+    font-size: 48px;
+    margin: 10px 0;
+    color: #FF3F00;
+}
+
+@media only screen and (max-width: 800px){
+    .question{
+        font-size: 24px;
+        margin: 10px 0;
+    }
+    .question-title{
+        font-size: 24px;
+        color: #FF3F00;
+        margin: 10px;
+    }
+}
+@media only screen and (max-width: 380px){
+
+    .question{
+        font-size: 24px;
+        margin: 5px 0;
+    }
+    .question-title{
+        font-size: 18px;
+        margin: 5px;
+    }
+}
