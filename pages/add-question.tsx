@@ -1,11 +1,12 @@
 import type { NextPage } from "next";
 import Input from "../components/basics/input";
-import { useQuery, useMutation, useApolloClient } from "@apollo/client";
+import { useQuery, useMutation, useApolloClient, gql } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { ChangeEvent } from "react";
 import Button from "../components/basics/button";
 import { getAllQuestions, addQuestion } from "@requests/question.request";
 import { QuestionType } from "interfaces";
+
 
 const AddQuestion: NextPage = () => {
 	const client = useApolloClient();

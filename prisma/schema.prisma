@@ -70,11 +70,11 @@ model Message {
   Recipient     User      @relation("ReceivedMessages", fields: [recipient_id], references: [id])
   sender_id     Int
   recipient_id  Int
+  message       String    @db.Text
   seen          Boolean   @default(false)
   received      Boolean   @default(false)
   received_date DateTime?
   seen_date     DateTime?
-  message       String    @db.Text
 }
 
 model Classroom {

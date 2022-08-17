@@ -1,4 +1,4 @@
-import { ApolloClient, InMemoryCache } from "@apollo/client";
+import { ApolloClient, InMemoryCache, makeVar, gql } from "@apollo/client";
 
 const apolloClient = new ApolloClient({
 	uri: "http://localhost:3000/api/graphql",
