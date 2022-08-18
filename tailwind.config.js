@@ -7,17 +7,19 @@ module.exports = {
   theme: {
     extend: {
       colors:{
-        'primary': '#001125',
         'main-black': "#04060E",
-        "yellow": "#7EF300",
+        "navy-blue": "#070D18",
+        "brown": "#262420",
+        "orange": "#FEBE58",
+        "purple": "#EE94D6",
+        "pink" : "#F6C9EA",
+        "gray": "#ACACAC",
         "white" :"#FDFDFD",
-        "grey": "#ACACAC",
-        "blue": "#42A0F8",
-        "navy-blue": "#001125",
-        "dark-grey" : "#070D18",
         "red": "#AA0000"
       }
     },
   },
   plugins: [],
 }
+
+//FF6F61

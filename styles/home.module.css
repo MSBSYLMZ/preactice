@@ -1,0 +1,22 @@
+.section2PreacticeButton {
+}
+.section2 {
+	width: 100%;
+	padding-right: 14%;
+}
+
+.veriticalLine {
+	position: absolute;
+	height: 100%;
+	width: 3px;
+	background-color: var(--purple);
+    top: 0;
+    right: 25px;
+}
+.horizontalLine{
+    position: absolute;
+    height: 3px;
+    width: calc(100% - 24rem);
+    background-color:  var(--purple);
+    bottom: 2.5rem;
+}

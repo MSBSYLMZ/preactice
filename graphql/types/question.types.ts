@@ -1,5 +1,6 @@
-import { extendType, intArg, list, nonNull, nullable, objectType, stringArg } from "nexus";
+import { arg, booleanArg, extendType, intArg, list, nonNull, nullable, objectType, stringArg, inputObjectType } from "nexus";
 import { isEmpty } from "utils";
+import { QuestionOption } from "./question-option.types";
 
 const QuestionCreateArgs = {
 	text: nonNull(stringArg()),
@@ -31,6 +32,16 @@ export const Question = objectType({
 				});
 			},
 		});
+		t.list.nonNull.field("options", {
+			type: "QuestionOption",
+			// resolve(_parent, args, context) {
+			// 	return context.prisma.questionOption.findMany({
+			// 		where: {
+			// 			question_id: _parent.id,
+			// 		},
+			// 	});
+			// },
+		});
 	},
 });
 
@@ -47,7 +58,15 @@ export const questionQuery = extendType({
 			},
 			resolve(_parent, args, context) {
 				const options = isEmpty(args) ? {} : { where: args };
-				return context.prisma.question.findMany(options);
+				return context.prisma.question.findMany({
+					...options,
+					include: {
+						options: true,
+					},
+					orderBy: {
+						id: "asc",
+					},
+				});
 			},
 		});
 
@@ -72,10 +91,29 @@ export const questionMutation = extendType({
 	definition(t) {
 		t.field("addQuestion", {
 			type: Question,
-			args: QuestionCreateArgs,
-			resolve(_parent, args, context) {
+			args: {
+				text: nonNull(stringArg()),
+				media: nullable(stringArg()),
+				creator_id: nullable(intArg()),
+				status: nullable(stringArg()),
+				privacy: nullable(stringArg()),
+				options: arg({
+					type: nonNull(list("QuestionOptionCreateInputs")),
+				}),
+			},
+			resolve(_parent, { options, ...rest }, context) {
 				return context.prisma.question.create({
-					data: args,
+					data: {
+						...rest,
+						options: {
+							createMany: {
+								data: options,
+							},
+						},
+					},
+					include: {
+						options: true,
+					},
 				});
 			},
 		});

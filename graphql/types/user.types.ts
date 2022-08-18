@@ -66,7 +66,7 @@ export const userMutation = extendType({
 				profile_photo: nullable(stringArg()),
 			},
 			resolve(_parent, args, context) {
-				return {};
+				return context.prisma.user.create({ data: args });
 			},
 		});
 	},
