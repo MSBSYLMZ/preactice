@@ -1,6 +1,6 @@
 import { useReactiveVar } from "@apollo/client";
 import { useCallback, useRef, useState, useLayoutEffect, useEffect, MutableRefObject } from "react";
-import { getRndInteger, removeElementFromArray, createSlotsInfoObject } from "../utils/index";
+import { getRndInteger, removeElementFromArray, createSlotsInfoObject, isEmpty } from "../utils/index";
 import { calculateCanvasSize, clearCanvas, getSquareInfo, setStrokes } from "utils/canvas";
 import useGame from "@hooks/useGame";
 import { puzzleVar, questionVar } from "apollo-client/reactive-variables";
@@ -117,9 +117,9 @@ const Puzzle = () => {
 		setSlotsInfo(newSlotsInfo);
 		setEmptySlotsArray(Object.keys(newSlotsInfo));
 	}, [slotCount]);
-    
+
 	const handleResize = useCallback(() => {
-		if (!window) return;
+		if (!globalThis) return;
 		const windowWidth = window.innerWidth;
 		const newCanvasSize = calculateCanvasSize(windowWidth);
 		if (ctx && newCanvasSize !== ctx.canvas.width) {
@@ -150,8 +150,11 @@ const Puzzle = () => {
 	useLayoutEffect(() => {
 		getImage();
 		let newCtx = ctx;
-		if (!ctx && puzzleCanvas) newCtx = puzzleCanvas.current ? puzzleCanvas.current.getContext("2d") : null;
-		imageLink && puzzleVar({ ...puzzleVar(), ctx: setStrokes(newCtx as CanvasRenderingContext2D, slotSquareRoot) });
+		if (puzzleCanvas) newCtx = puzzleCanvas.current ? puzzleCanvas.current.getContext("2d") : null;
+		if (imageLink) {
+			const context = setStrokes(newCtx as CanvasRenderingContext2D, slotSquareRoot);
+			puzzleVar({ ...puzzleVar(), ctx: context as CanvasRenderingContext2D });
+		}
 		resetSlotsInfo();
 	}, [imageLink]);
 

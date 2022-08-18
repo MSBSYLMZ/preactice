@@ -1,21 +1,25 @@
 import { SvgIconComponent } from "@mui/icons-material";
-import { ButtonHTMLAttributes } from "react";
+import { ButtonHTMLAttributes, forwardRef, FunctionComponent, ReactNode } from "react";
 import Button from "../basics/button";
 
 interface IntroButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	icon?: JSX.Element;
+	children?: ReactNode;
 }
 
-function IntroButton(props: IntroButtonProps) {
-	const { icon, children, ...otherProps } = props;
+const IntroButton: FunctionComponent<IntroButtonProps> = forwardRef((props: IntroButtonProps, ref = null) => {
+	const { icon, children = null, ...otherProps } = props;
 	return (
-		<Button className="block w-full sm:w-96 hover:bg-blue my-5 flex justify-center text-center" {...otherProps}>
+		<Button
+			className="w-full sm:w-80 pt-4 px-6 h-16 hover:bg-gray hover:text-black bg-navy-blue text-white my-5 flex justify-center text-center"
+			{...otherProps}>
 			<>
 				{icon && icon}
 				<p>{children}</p>
 			</>
 		</Button>
 	);
-}
+});
+IntroButton.displayName = "Intro Button";
 
 export default IntroButton;

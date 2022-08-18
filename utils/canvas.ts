@@ -2,18 +2,17 @@
 const DEFAULT_SQUARE_COUNT = 4;
 
 export function setStrokes(ctx: CanvasRenderingContext2D, squareCount = DEFAULT_SQUARE_COUNT) {
+	if(!ctx) return;
 	const canvasWidth = ctx.canvas.width;
 	const singleSquareSize = canvasWidth / squareCount;
-	if (ctx) {
 		for (let i = 0; i < squareCount; i++) {
 			let xAxis = i * singleSquareSize;
 			for (let j = 0; j < squareCount; j++) {
 				let yAxis = j * singleSquareSize;
-				ctx.strokeStyle = "#FFFA4D";
+				ctx.strokeStyle = "#04060E";
 				ctx.strokeRect(xAxis, yAxis, singleSquareSize, singleSquareSize);
 			}
 		}
-	}
 	return ctx;
 }
 
