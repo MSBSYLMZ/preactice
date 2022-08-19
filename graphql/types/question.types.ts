@@ -1,6 +1,9 @@
 import { arg, booleanArg, extendType, intArg, list, nonNull, nullable, objectType, stringArg, inputObjectType } from "nexus";
-import { isEmpty } from "utils";
+import { getRandUniqueIntArray, getRndInteger, isEmpty } from "utils";
+import { Question as QuestionPrisma } from "@prisma/client";
+import { raw } from "@prisma/client/runtime";
 import { QuestionOption } from "./question-option.types";
+import { generateWhereStatement } from "utils/query";
 
 const QuestionCreateArgs = {
 	text: nonNull(stringArg()),
@@ -9,6 +12,8 @@ const QuestionCreateArgs = {
 	status: nullable(stringArg()),
 	privacy: nullable(stringArg()),
 };
+
+const DEFAULT_LIMIT = 16;
 
 const QuestionUpdateArgs = { ...QuestionCreateArgs, id: nullable(intArg()) };
 
@@ -56,17 +61,60 @@ export const questionQuery = extendType({
 				status: nullable(intArg()),
 				privacy: nullable(intArg()),
 			},
-			resolve(_parent, args, context) {
+			async resolve(_parent, args, context) {
 				const options = isEmpty(args) ? {} : { where: args };
 				return context.prisma.question.findMany({
 					...options,
 					include: {
 						options: true,
 					},
-					orderBy: {
-						id: "asc",
+				});
+			},
+		});
+
+		t.field("getRandomQuestions", {
+			type: list(Question),
+			args: {
+				text: nullable(stringArg()),
+				creator_id: nullable(intArg()),
+				status: nullable(intArg()),
+				privacy: nullable(intArg()),
+				limit: nullable(intArg()),
+			},
+			async resolve(_parent, args, context) {
+				let limit;
+				let whereStatement;
+				if (args.limit) {
+					limit = args.limit;
+					delete args.limit;
+				}
+				if (!isEmpty(args)) {
+					whereStatement = generateWhereStatement(args);
+				}
+				let questions;
+				if (whereStatement) {
+					questions = await context.prisma.$queryRaw<QuestionPrisma>`SELECT id FROM "public"."Question" ${
+						whereStatement ? whereStatement : null
+					} ORDER BY random() LIMIT ${args.limit ?? DEFAULT_LIMIT}`;
+				} else {
+					questions = await context.prisma.$queryRaw<QuestionPrisma>`SELECT id FROM "public"."Question" ORDER BY random() LIMIT ${
+						limit ?? DEFAULT_LIMIT
+					}`;
+				}
+
+				const questionIds = questions.map((question: { id: number }) => question.id);
+				console.log(questions);
+				const result = await context.prisma.question.findMany({
+					where: {
+						id: {
+							in: questionIds,
+						},
+					},
+					include: {
+						options: true,
 					},
 				});
+				return result;
 			},
 		});
 

@@ -5,8 +5,23 @@ export const isEmpty = obj => {
 export const isKeysExistsInObject = (obj, keys) => keys.filter(item => !([item] in obj)).length === 0;
 export const minifyObjectByKeys = (obj, keys) => keys.reduce((acc, cur) => [cur] in obj && { ...acc, [cur]: obj[cur] }, {});
 
-export function getRndInteger(max, min = 1) {
+export function getRndInteger(max: number, min = 1) {
 	return Math.floor(Math.random() * (max - min)) + min;
+}
+
+export function getRandUniqueIntArray(max, min = 1, size) {
+	const uniqueRandSet = new Set();
+	for (let i = 0; i < size; i++) {
+		uniqueRandSet.add(getRndInteger(max, min));
+	}
+	if (uniqueRandSet.size < size) {
+		Array.from({ length: size }, (v, i) => uniqueRandSet.add(i + min));
+	}
+	return Array.from(uniqueRandSet).slice(0, size);
+}
+
+export function range(length, startAt = 0) {
+	return Array.from({ length }, (_, i) => i + startAt);
 }
 
 export function shuffleArray(array) {
