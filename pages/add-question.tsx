@@ -1,72 +1,34 @@
 import type { NextPage } from "next";
 import Input from "../components/basics/input";
-import { useQuery, useMutation, useApolloClient, gql } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useEffect, useState } from "react";
 import { ChangeEvent } from "react";
 import Button from "../components/basics/button";
-import { getAllQuestions, addQuestion } from "@requests/question.request";
+import { addQuestion } from "apollo-client/question.queries";
 import { QuestionType } from "interfaces";
 
-
 const AddQuestion: NextPage = () => {
-	const client = useApolloClient();
-	const { data: questionData, error: questionsError, loading: questionsLoading, refetch } = useQuery(getAllQuestions);
-	const [form, setForm] = useState({ question: "" });
-	const [addQuestionRunner, { data: addedQuestion, error: addQuestionError, loading: addQuestionLoading }] = useMutation(addQuestion, {
-		variables: {
-			text: form.question,
-		},
-		update(cache, { data }) {
-			const newQuestion = data?.addQuestion;
-			const existingQuestions: { questions: QuestionType[] } | null = cache.readQuery({
-				query: getAllQuestions,
-			});
-			cache.writeQuery({
-				query: getAllQuestions,
-				data: {
-					questions: [...(existingQuestions?.questions as QuestionType[]), newQuestion],
-				},
-			});
-		},
-	});
+	const [form, setForm] = useState({ question: "", correctAnswer: "", options: [""], category: "" });
+	// const [addQuestionRunner, { data: addedQuestion, error: addQuestionError, loading: addQuestionLoading }] = useMutation(addQuestion, {
+	// 	variables: {
+	// 		text: form.question,
+	// 	},
+	// 	update(cache, { data }) {
+	// 		const newQuestion = data?.addQuestion;
+	// 		const existingQuestions: { questions: QuestionType[] } | null = cache.readQuery({
+	// 			query: getAllQuestions,
+	// 		});
+	// 		cache.writeQuery({
+	// 			query: getAllQuestions,
+	// 			data: {
+	// 				questions: [...(existingQuestions?.questions as QuestionType[]), newQuestion],
+	// 			},
+	// 		});
+	// 	},
+	// });
 
 	const handleSubmit = async () => {
-		addQuestionRunner();
-	};
-
-	const handleRefetch = async () => {
-		const resp = await refetch();
-		console.log(resp);
-	};
-
-	const handleCacheData = () => {
-		const response = client.readQuery({
-			query: getAllQuestions,
-		});
-		console.log("from read query", response);
-		console.log("direct data", window.__APOLLO_CLIENT__.cache.data.data);
-	};
-
-	const handleModifyCache = () => {
-		const cache = client.cache;
-		const response = cache.modify({
-			id: "Question:5",
-			fields: {
-				creator(cachedCreator, { readField }) {
-					return { __ref: "User:2", first_name: "Musab" };
-				},
-			},
-		});
-		// const response = cache.modify({
-		// 	id: "Question:5",
-		// 	fields: {
-		// 		text(text) {
-		// 			return "Degisti";
-		// 		},
-		// 	},
-		// });
-		console.log("from modified data", response);
-		console.log("modified direct data", window.__APOLLO_CLIENT__.cache.data.data);
+		// addQuestionRunner();
 	};
 
 	const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -74,27 +36,44 @@ const AddQuestion: NextPage = () => {
 		const value: string = e.target.value;
 		setForm({ ...form, [key]: value });
 	};
-	console.log(questionData);
-	const questions = questionData?.questions.map((question: QuestionType) => (
-		<div key={question.id}>
-			{question.text}
-			{question.creator?.first_name}
-		</div>
-	));
-	if (questionsError) {
-		console.log(questionsError);
-	}
-	if (questionsError) return <>Error Occured</>;
-	if (questionsLoading) return <>Loading</>;
+
 	return (
-		<div className="mt-40 bg-yellow">
-			<label>Question</label>
-			<Input value={form.question} onChange={handleOnChange} type="text" id="question" />
-			<Button onClick={handleSubmit}>Submit</Button>
-			<Button onClick={handleCacheData}>Cache Dont Request</Button>
-			<Button onClick={handleRefetch}>Refetch</Button>
-			<Button onClick={handleModifyCache}>Modify</Button>
-			{questions}
+		<div className="mt-28 bg-yellow w-8/12 mx-auto">
+			<h3 className="text-purple text-7xl text-center font-bold">Share Your Wisdom</h3>
+			<h4 className="text-black text-3xl text-center font-bold">By adding a question to the pool</h4>
+			<ul>
+				<li className="list-disc text-2xl font-medium">Keep it short. We don’t want people to struggle trying to finish reading. Right?</li>
+				<li className="list-disc text-2xl font-medium">Answer options and categories should be relevant to the question. </li>
+				<li className="list-disc text-2xl font-medium">Be sure about the answer. We recommend check it again before submiting.</li>
+				<li className="list-disc text-2xl font-medium">When chosing the diffuculty level. Be consider everybody.</li>
+			</ul>
+			<div className="my-6">
+				<label className="text-xl">Question</label>
+				<Input className="bg-gray h-16" value={form.question} onChange={handleOnChange} type="text" id="question" maxLength={300} />
+				<div>{form.question.length} / 300</div>
+			</div>
+			<div className="flex justify-between flex-wrap">
+				<div className="my-6 w-5/12">
+					<label>Correct answer</label>
+					<Input className="bg-gray h-16" value={form.correctAnswer} onChange={handleOnChange} type="text" id="correctAnswer" />
+				</div>
+				<div className="my-6 w-5/12">
+					<label>Option</label>
+					<Input className="bg-gray h-16" value={form.options[0]} onChange={handleOnChange} type="text" id="option" />
+				</div>
+			</div>
+			<div className="flex justify-between my-4">
+				<div></div>
+				<Button className="bg-black text-white px-8 w-52">+ Add Option</Button>
+			</div>
+			<div className="my-6">
+				<label>Category</label>
+				<Input className="bg-gray h-16" value={form.category} onChange={handleOnChange} type="text" id="question" />
+			</div>
+			<div className="flex justify-between my-4">
+				<div></div>
+				<Button className="bg-black text-white w-52">Submit</Button>
+			</div>
 		</div>
 	);
 };
