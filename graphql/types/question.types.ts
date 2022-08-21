@@ -1,8 +1,7 @@
-import { arg, booleanArg, extendType, intArg, list, nonNull, nullable, objectType, stringArg, inputObjectType } from "nexus";
-import { getRandUniqueIntArray, getRndInteger, isEmpty } from "utils";
-import { Question as QuestionPrisma } from "@prisma/client";
-import { raw } from "@prisma/client/runtime";
-import { QuestionOption } from "./question-option.types";
+import { arg, extendType, intArg, list, nonNull, nullable, objectType, stringArg, inputObjectType } from "nexus";
+import { isEmpty } from "utils";
+import { Question as QuestionPrisma, QuestionOption as QuestionOptionPrisma } from "@prisma/client";
+import { QuestionOptionCreateInputs } from "./question-option.types";
 import { generateWhereStatement } from "utils/query";
 
 const QuestionCreateArgs = {
@@ -28,14 +27,14 @@ export const Question = objectType({
 		t.nullable.string("privacy");
 		t.field("creator", {
 			type: "User",
-			resolve(_parent, args, context) {
-				if (!_parent.creator_id) return null;
-				return context.prisma.user.findUnique({
-					where: {
-						id: _parent.creator_id,
-					},
-				});
-			},
+			// resolve(_parent, args, context) {
+			// 	if (!_parent.creator_id) return null;
+			// 	return context.prisma.user.findUnique({
+			// 		where: {
+			// 			id: _parent.creator_id,
+			// 		},
+			// 	});
+			// },
 		});
 		t.list.nonNull.field("options", {
 			type: "QuestionOption",
@@ -61,10 +60,10 @@ export const questionQuery = extendType({
 				status: nullable(intArg()),
 				privacy: nullable(intArg()),
 			},
-			async resolve(_parent, args, context) {
-				const options = isEmpty(args) ? {} : { where: args };
+			resolve(_parent, args, context) {
+				const whereOptions = isEmpty(args) ? null : { where: args };
 				return context.prisma.question.findMany({
-					...options,
+					...(whereOptions as {}),
 					include: {
 						options: true,
 					},
@@ -93,11 +92,11 @@ export const questionQuery = extendType({
 				}
 				let questions;
 				if (whereStatement) {
-					questions = await context.prisma.$queryRaw<QuestionPrisma>`SELECT id FROM "public"."Question" ${
+					questions = await context.prisma.$queryRaw<QuestionPrisma[]>`SELECT id FROM "public"."Question" ${
 						whereStatement ? whereStatement : null
 					} ORDER BY random() LIMIT ${args.limit ?? DEFAULT_LIMIT}`;
 				} else {
-					questions = await context.prisma.$queryRaw<QuestionPrisma>`SELECT id FROM "public"."Question" ORDER BY random() LIMIT ${
+					questions = await context.prisma.$queryRaw<QuestionPrisma[]>`SELECT id FROM "public"."Question" ORDER BY random() LIMIT ${
 						limit ?? DEFAULT_LIMIT
 					}`;
 				}
@@ -149,6 +148,10 @@ export const questionMutation = extendType({
 					type: nonNull(list("QuestionOptionCreateInputs")),
 				}),
 			},
+			validate: ({ string }) => ({
+				text: string().min(30),
+			}),
+
 			resolve(_parent, { options, ...rest }, context) {
 				return context.prisma.question.create({
 					data: {
@@ -165,11 +168,12 @@ export const questionMutation = extendType({
 				});
 			},
 		});
+
 		t.field("updateQuestion", {
 			type: Question,
 			args: QuestionUpdateArgs,
 			resolve(_parent, args, context) {
-				const id = args.id;
+				const id = args.id as number;
 				delete args.id;
 				return context.prisma.question.update({
 					where: {
