@@ -1,18 +1,31 @@
+import { Prisma } from "@prisma/client";
 import { booleanArg, extendType, inputObjectType, intArg, list, nonNull, nullable, objectType, stringArg } from "nexus";
-
-const QuestionOptionCreateArgs = {
-	text: nonNull(stringArg()),
-	media: nullable(stringArg()),
-	correct: nonNull(booleanArg()),
-	question_id: nonNull(intArg()),
-};
-
-const QuestionOptionUpdateArgs = { ...QuestionOptionCreateArgs, id: nullable(intArg()) };
 
 export const QuestionOptionCreateInputs = inputObjectType({
 	name: "QuestionOptionCreateInputs",
 	definition(t) {
-		t.nonNull.string("text"), t.nullable.string("media"), t.nonNull.boolean("correct");
+		t.nonNull.string("text");
+		t.nullable.string("media");
+		t.nullable.boolean("correct");
+		t.nonNull.int("question_id");
+	},
+});
+
+// export const QuestionOptionCreateInputs = {
+// 	text: nonNull(stringArg()),
+// 	media: nullable(stringArg()),
+// 	correct: nullable(booleanArg()),
+// 	question_id: nonNull(intArg()),
+// };
+
+// const QuestionOptionUpdateInputs = { ...QuestionOptionCreateInputs, id: nonNull(intArg()) };
+export const QuesitonOptionUpdateInputs = inputObjectType({
+	name: "QuestionOptionUpdateInputs",
+	definition(t) {
+		t.nullable.int("id");
+		t.nullable.string("media");
+		t.nonNull.boolean("correct");
+		t.nonNull.int("question_id");
 	},
 });
 
@@ -23,6 +36,7 @@ export const QuestionOption = objectType({
 		t.nonNull.string("text");
 		t.nullable.string("media");
 		t.nonNull.boolean("correct");
+		t.nonNull.int("question_id");
 		t.field("question", {
 			type: "Question",
 			resolve(_parent, args, context) {
@@ -40,13 +54,15 @@ export const questionOptionQuery = extendType({
 	type: "Query",
 	definition(t) {
 		t.field("questionOption", {
-			type: list("QuestionOption"),
+			type: "QuestionOption",
 			args: {
 				id: nonNull(intArg()),
 			},
 			resolve(_parent, args, context) {
 				return context.prisma.questionOption.findUnique({
-					id: args.id,
+					where: {
+						id: args.id,
+					},
 				});
 			},
 		});
@@ -58,24 +74,29 @@ export const questionOptionMutation = extendType({
 	definition(t) {
 		t.field("addQuestionOption", {
 			type: "QuestionOption",
-			args: { data: "QuestionOptionCreateInputs" },
+			args: {
+				data: QuestionOptionCreateInputs
+			},
 			resolve(_parent, args, context) {
+				console.log(args);
 				return context.prisma.questionOption.create({
-					data: args,
+					data: args.data as Prisma.QuestionOptionUncheckedCreateInput,
 				});
 			},
 		});
 		t.field("updateQuestionOption", {
 			type: "QuestionOption",
-			args: QuestionOptionUpdateArgs,
+			args: {
+				data: QuesitonOptionUpdateInputs,
+			},
 			resolve(_parent, args, context) {
-				const id = args.id;
-				delete args.id;
+				const id = args.data.id as number;
+				delete args.data.id;
 				return context.prisma.questionOption.update({
 					where: {
 						id,
 					},
-					data: args,
+					data: args.data as Prisma.QuestionOptionUncheckedUpdateInput,
 				});
 			},
 		});

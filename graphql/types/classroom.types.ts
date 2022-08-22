@@ -1,14 +1,37 @@
-import { extendType, intArg, list, nonNull, nullable, objectType, stringArg } from "nexus";
-import { isEmpty } from "utils";
+import { Prisma } from "@prisma/client";
+import { extendType, inputObjectType, intArg, list, nonNull, nullable, objectType, stringArg } from "nexus";
+import { isEmpty } from "../../utils";
 
-const ClassroomCreateArgs = {
+const ClassroomCreateInputs = {
 	name: nullable(stringArg()),
 	description: nullable(stringArg()),
 	privacy: nullable(stringArg()),
 	creator_id: nullable(intArg()),
 };
 
-const ClassroomUpdateArgs = { ...ClassroomCreateArgs, id: nullable(intArg()) };
+const ClassroomUpdateInputs = { ...ClassroomCreateInputs, id: nonNull(intArg()) };
+
+// export const ClassroomCrateInputs = inputObjectType({
+// 	name: "ClassroomCreateInputs",
+// 	definition(t) {
+// 		t.nullable.string("name");
+// 		t.nullable.string("description");
+// 		t.nullable.field("privacy", { type: "Privacy" });
+// 		t.nonNull.int("creator_id");
+// 	},
+// });
+
+// export const ClassroomUpdateInputs = inputObjectType({
+// 	name: "ClassroomUpdateInputs",
+// 	definition(t) {
+// 		t.nullable.string("name");
+// 		t.nullable.string("description");
+// 		t.nullable.field("privacy", { type: "Privacy" });
+// 		t.nonNull.int("creator_id");
+// 	},
+// });
+
+// const ClassroomUpdateArgs = { ...ClassroomCreateArgs, id: nullable(intArg()) };
 
 export const Classroom = objectType({
 	name: "Classroom",
@@ -17,6 +40,7 @@ export const Classroom = objectType({
 		t.nonNull.string("name");
 		t.nullable.string("description");
 		t.nullable.string("privacy");
+		t.nonNull.int("creator_id");
 		t.field("creator", {
 			type: "User",
 			resolve(_parent, args, context) {
@@ -36,10 +60,10 @@ export const classroomQuery = extendType({
 	definition(t) {
 		t.field("classrooms", {
 			type: list(Classroom),
-			args: ClassroomCreateArgs,
+			args: {},
 			resolve(_parent, args, context) {
 				const options = isEmpty(args) ? {} : { where: args };
-				return context.prisma.classroom.findMany(options);
+				return context.prisma.classroom.findMany(options as Prisma.ClassroomFindManyArgs);
 			},
 		});
 
@@ -64,7 +88,7 @@ export const classroomMutation = extendType({
 	definition(t) {
 		t.field("addClassroom", {
 			type: Classroom,
-			args: ClassroomCreateArgs,
+			args: ClassroomCreateInputs,
 			resolve(_parent, args, context) {
 				return context.prisma.classroom.create({
 					data: args,
@@ -73,7 +97,7 @@ export const classroomMutation = extendType({
 		});
 		t.field("updateClassroom", {
 			type: Classroom,
-			args: ClassroomUpdateArgs,
+			args: ClassroomUpdateInputs,
 			resolve(_parent, args, context) {
 				const id = args.id;
 				delete args.id;

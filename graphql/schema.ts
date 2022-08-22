@@ -1,8 +1,10 @@
 import { makeSchema } from "nexus";
 import * as types from "./types";
-import { validatePlugin, ValidationError } from "nexus-validate";
-import { UserInputError } from "apollo-server-micro";
+import { validatePlugin } from "nexus-validate";
 import { join } from "path";
+
+console.log(types)
+
 
 const schema = makeSchema({
 	types,

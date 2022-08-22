@@ -4,32 +4,42 @@
 
 type Classroom {
   creator: User
+  creator_id: Int!
   description: String
   id: Int
   name: String!
   privacy: String
 }
 
+"""Date custom scalar type"""
+scalar Date
+
 type Mutation {
   addClassroom(creator_id: Int, description: String, name: String, privacy: String): Classroom
-  addQuestion(creator_id: Int, media: String, options: [QuestionOptionCreateInputs]!, privacy: String, status: String, text: String!): Question
+  addQuestion(creator_id: Int, media: String, options: [QuestionOptionCreateInputs]!, privacy: Privacy = private, status: Status = pending, text: String!): Question
   addQuestionOption(data: QuestionOptionCreateInputs): QuestionOption
   createUser(bio: String, date_of_birth: String, email: String, first_name: String!, last_name: String!, password: String!, profile_photo: String, username: String!): User
   deleteClassroom(id: Int!): Classroom
   deleteQuestion(id: Int!): Question
   deleteQuestionOption(id: Int!): QuestionOption
-  updateClassroom(creator_id: Int, description: String, id: Int, name: String, privacy: String): Classroom
-  updateQuestion(creator_id: Int, id: Int, media: String, privacy: String, status: String, text: String!): Question
-  updateQuestionOption(correct: Boolean!, id: Int, media: String, question_id: Int!, text: String!): QuestionOption
+  updateClassroom(creator_id: Int, description: String, id: Int!, name: String, privacy: String): Classroom
+  updateQuestion(creator_id: Int, id: Int, media: String, options: [QuestionOptionCreateInputs]!, privacy: Privacy = private, status: Status = pending, text: String!): Question
+  updateQuestionOption(data: QuestionOptionUpdateInputs): QuestionOption
+}
+
+enum Privacy {
+  private
+  protected
+  public
 }
 
 type Query {
   classroom(id: Int!): Classroom
-  classrooms(creator_id: Int, description: String, name: String, privacy: String): [Classroom]
-  getRandomQuestions(creator_id: Int, limit: Int, privacy: Int, status: Int, text: String): [Question]
+  classrooms: [Classroom]
+  getRandomQuestions(creator_id: Int, limit: Int, privacy: Privacy, status: Status, text: String): [Question]
   question(id: Int!): Question
-  questionOption(id: Int!): [QuestionOption]
-  questions(creator_id: Int, privacy: Int, status: Int, text: String): [Question]
+  questionOption(id: Int!): QuestionOption
+  questions(creator_id: Int, privacy: Privacy, status: Int, text: String): [Question]
   user(id: Int!): User
   users: [User]
 }
@@ -40,8 +50,8 @@ type Question {
   id: Int
   media: String
   options: [QuestionOption!]
-  privacy: String
-  status: String
+  privact: Privacy
+  status: Status
   text: String!
 }
 
@@ -50,18 +60,33 @@ type QuestionOption {
   id: Int
   media: String
   question: Question
+  question_id: Int!
   text: String!
 }
 
 input QuestionOptionCreateInputs {
-  correct: Boolean!
+  correct: Boolean
   media: String
+  question_id: Int!
   text: String!
+}
+
+input QuestionOptionUpdateInputs {
+  correct: Boolean!
+  id: Int
+  media: String
+  question_id: Int!
+}
+
+enum Status {
+  approved
+  pending
+  rejected
 }
 
 type User {
   bio: String
-  date_of_birth: String
+  date_of_birth: Date
   email: String
   first_name: String!
   id: Int!
