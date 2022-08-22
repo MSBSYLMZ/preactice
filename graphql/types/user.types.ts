@@ -1,5 +1,18 @@
 import { objectType, queryType, list, mutationType, nullable, nonNull, stringArg, makeSchema, intArg, extendType } from "nexus";
 
+const UserCreateInputs = {
+	username: nonNull(stringArg()),
+	first_name: nonNull(stringArg()),
+	last_name: nonNull(stringArg()),
+	password: nonNull(stringArg()),
+	email: nullable(stringArg()),
+	date_of_birth: nullable(stringArg()),
+	bio: nullable(stringArg()),
+	profile_photo: nullable(stringArg()),
+};
+
+const UserUpdateInputs = { ...UserCreateInputs, id: nonNull(intArg()) };
+
 export const User = objectType({
 	name: "User",
 	definition(t) {
@@ -11,7 +24,7 @@ export const User = objectType({
 		t.nullable.string("email");
 		t.nullable.string("bio");
 		t.nullable.string("profile_photo");
-		t.nullable.string("date_of_birth");
+		t.nullable.field("date_of_birth", { type: "Date" });
 		t.field("questions", {
 			type: list("Question"),
 			resolve(_parent, args, context) {
@@ -55,16 +68,7 @@ export const userMutation = extendType({
 	definition(t) {
 		t.field("createUser", {
 			type: User,
-			args: {
-				username: nonNull(stringArg()),
-				first_name: nonNull(stringArg()),
-				last_name: nonNull(stringArg()),
-				password: nonNull(stringArg()),
-				email: nullable(stringArg()),
-				date_of_birth: nullable(stringArg()),
-				bio: nullable(stringArg()),
-				profile_photo: nullable(stringArg()),
-			},
+			args: UserCreateInputs,
 			resolve(_parent, args, context) {
 				return context.prisma.user.create({ data: args });
 			},

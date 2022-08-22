@@ -1,5 +1,5 @@
 import { extendType, intArg, list, nonNull, nullable, objectType, stringArg } from "nexus";
-import { isEmpty } from "utils";
+import { isEmpty } from "../../utils";
 
 const GalleryCreateArgs = {
 	owner_id: nonNull(intArg()),

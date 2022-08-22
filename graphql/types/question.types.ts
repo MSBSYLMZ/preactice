@@ -1,20 +1,40 @@
-import { arg, extendType, intArg, list, nonNull, nullable, objectType, stringArg, inputObjectType } from "nexus";
-import { isEmpty } from "utils";
-import { Question as QuestionPrisma, QuestionOption as QuestionOptionPrisma } from "@prisma/client";
-import { QuestionOptionCreateInputs } from "./question-option.types";
-import { generateWhereStatement } from "utils/query";
-
-const QuestionCreateArgs = {
-	text: nonNull(stringArg()),
-	media: nullable(stringArg()),
-	creator_id: nullable(intArg()),
-	status: nullable(stringArg()),
-	privacy: nullable(stringArg()),
-};
+import { arg, extendType, intArg, list, nonNull, nullable, objectType, stringArg, inputObjectType, enumType } from "nexus";
+import { isEmpty } from "../../utils";
+import { Question as QuestionPrisma, QuestionOption as QuestionOptionPrisma, Prisma } from "@prisma/client";
+import { generateWhereStatement } from "../../utils/query";
+import { PrivacyEnumType, StatusEnumType } from "./common.types";
 
 const DEFAULT_LIMIT = 16;
 
-const QuestionUpdateArgs = { ...QuestionCreateArgs, id: nullable(intArg()) };
+const QuestionCreateInputs = {
+	text: nonNull(stringArg()),
+	media: nullable(stringArg()),
+	creator_id: nullable(intArg()),
+	status: arg({
+		type: nullable(StatusEnumType),
+		default: "pending",
+	}),
+	privacy: arg({
+		type: nullable(PrivacyEnumType),
+		default: "private",
+	}),
+	options: arg({
+		type: nonNull(list("QuestionOptionCreateInputs")),
+	}),
+
+	// text: nonNull(stringArg()),
+	// 		media: nullable(stringArg()),
+	// 		creator_id: nullable(intArg()),
+	// 		status: arg({
+	// 			type: "Status",
+	// 		}),
+	// 		privacy: arg({
+	// 			type: nonNull("Privacy"),
+	// 			default: "public",
+	// 		}),
+};
+
+const QuestionUpdateInputs = { ...QuestionCreateInputs, id: nullable(intArg()) };
 
 export const Question = objectType({
 	name: "Question",
@@ -23,28 +43,28 @@ export const Question = objectType({
 		t.nonNull.string("text");
 		t.nullable.string("media");
 		t.nullable.int("creator_id");
-		t.nullable.string("status");
-		t.nullable.string("privacy");
-		t.field("creator", {
+		t.nullable.field("status", { type: "Status" });
+		t.nullable.field("privact", { type: "Privacy" });
+		t.nullable.field("creator", {
 			type: "User",
-			// resolve(_parent, args, context) {
-			// 	if (!_parent.creator_id) return null;
-			// 	return context.prisma.user.findUnique({
-			// 		where: {
-			// 			id: _parent.creator_id,
-			// 		},
-			// 	});
-			// },
+			resolve(_parent, args, context) {
+				if (!_parent.creator_id) return null;
+				return context.prisma.user.findUnique({
+					where: {
+						id: _parent.creator_id,
+					},
+				});
+			},
 		});
 		t.list.nonNull.field("options", {
 			type: "QuestionOption",
-			// resolve(_parent, args, context) {
-			// 	return context.prisma.questionOption.findMany({
-			// 		where: {
-			// 			question_id: _parent.id,
-			// 		},
-			// 	});
-			// },
+			resolve(_parent, args, context) {
+				return context.prisma.questionOption.findMany({
+					where: {
+						question_id: _parent.id as number,
+					},
+				});
+			},
 		});
 	},
 });
@@ -58,7 +78,9 @@ export const questionQuery = extendType({
 				text: nullable(stringArg()),
 				creator_id: nullable(intArg()),
 				status: nullable(intArg()),
-				privacy: nullable(intArg()),
+				privacy: arg({
+					type: nullable(PrivacyEnumType),
+				}),
 			},
 			resolve(_parent, args, context) {
 				const whereOptions = isEmpty(args) ? null : { where: args };
@@ -76,8 +98,12 @@ export const questionQuery = extendType({
 			args: {
 				text: nullable(stringArg()),
 				creator_id: nullable(intArg()),
-				status: nullable(intArg()),
-				privacy: nullable(intArg()),
+				status: arg({
+					type: StatusEnumType,
+				}),
+				privacy: arg({
+					type: nullable(PrivacyEnumType),
+				}),
 				limit: nullable(intArg()),
 			},
 			async resolve(_parent, args, context) {
@@ -102,7 +128,6 @@ export const questionQuery = extendType({
 				}
 
 				const questionIds = questions.map((question: { id: number }) => question.id);
-				console.log(questions);
 				const result = await context.prisma.question.findMany({
 					where: {
 						id: {
@@ -138,30 +163,22 @@ export const questionMutation = extendType({
 	definition(t) {
 		t.field("addQuestion", {
 			type: Question,
-			args: {
-				text: nonNull(stringArg()),
-				media: nullable(stringArg()),
-				creator_id: nullable(intArg()),
-				status: nullable(stringArg()),
-				privacy: nullable(stringArg()),
-				options: arg({
-					type: nonNull(list("QuestionOptionCreateInputs")),
-				}),
-			},
-			validate: ({ string }) => ({
-				text: string().min(30),
-			}),
+			args: QuestionCreateInputs,
+			// validate: ({ string }) => ({
+			// 	text: string().min(30),
+			// }),
 
 			resolve(_parent, { options, ...rest }, context) {
-				return context.prisma.question.create({
-					data: {
-						...rest,
-						options: {
-							createMany: {
-								data: options,
-							},
+				const creationData: Prisma.QuestionUncheckedCreateInput = {
+					...rest,
+					options: {
+						createMany: {
+							data: options as QuestionOptionPrisma[],
 						},
 					},
+				};
+				return context.prisma.question.create({
+					data: creationData,
 					include: {
 						options: true,
 					},
@@ -171,7 +188,7 @@ export const questionMutation = extendType({
 
 		t.field("updateQuestion", {
 			type: Question,
-			args: QuestionUpdateArgs,
+			args: QuestionUpdateInputs,
 			resolve(_parent, args, context) {
 				const id = args.id as number;
 				delete args.id;
@@ -179,7 +196,7 @@ export const questionMutation = extendType({
 					where: {
 						id,
 					},
-					data: args,
+					data: args as QuestionPrisma,
 				});
 			},
 		});

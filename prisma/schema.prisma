@@ -44,7 +44,7 @@ model Question {
   creator    User?              @relation(fields: [creator_id], references: [id])
   creator_id Int?
   categories QuestionCategory[]
-  status     Status?
+  status     Status?            @default(pending)
   privacy    Privacy            @default(public)
   deleted    Boolean            @default(false)
   created_at DateTime           @default(now())
