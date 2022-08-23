@@ -3,9 +3,6 @@ import * as types from "./types";
 import { validatePlugin } from "nexus-validate";
 import { join } from "path";
 
-console.log(types)
-
-
 const schema = makeSchema({
 	types,
 	outputs: {

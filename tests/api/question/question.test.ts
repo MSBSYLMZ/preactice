@@ -5,13 +5,12 @@ const ctx = createTestContext();
 it("ensures that a question can be created", async () => {
 	const result = await ctx.client.request(
 		`
-      mutation CreateUser($username: String!, $firstName: String!, $lastName: String!, $password: String!) {
+      mutation createUser($username: String!, $firstName: String!, $lastName: String!, $password: String!) {
         createUser(username: $username, first_name: $firstName, last_name: $lastName, password: $password) {
           username
           first_name
           last_name
           password
-          id
         }
       }
   `,
@@ -20,10 +19,10 @@ it("ensures that a question can be created", async () => {
 	expect(result).toMatchInlineSnapshot(`
     Object {
       "createUser": Object {
-        "first_name": "another 2",
+        "first_name": "first",
         "last_name": "last",
         "password": "password",
-        "username": "user",
+        "username": "another 2",
       },
     }
 `);
