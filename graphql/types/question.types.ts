@@ -6,7 +6,7 @@ import { PrivacyEnumType, StatusEnumType } from "./common.types";
 
 const DEFAULT_LIMIT = 16;
 
-const QuestionCreateInputs = {
+const QuestionCreateArgs = {
 	text: nonNull(stringArg()),
 	media: nullable(stringArg()),
 	creator_id: nullable(intArg()),
@@ -15,26 +15,15 @@ const QuestionCreateInputs = {
 		default: "pending",
 	}),
 	privacy: arg({
-		type: nullable(PrivacyEnumType),
+		type: nonNull(PrivacyEnumType),
 		default: "private",
 	}),
 	options: arg({
 		type: nonNull(list("QuestionOptionCreateInputs")),
 	}),
-
-	// text: nonNull(stringArg()),
-	// 		media: nullable(stringArg()),
-	// 		creator_id: nullable(intArg()),
-	// 		status: arg({
-	// 			type: "Status",
-	// 		}),
-	// 		privacy: arg({
-	// 			type: nonNull("Privacy"),
-	// 			default: "public",
-	// 		}),
 };
 
-const QuestionUpdateInputs = { ...QuestionCreateInputs, id: nullable(intArg()) };
+const QuestionUpdateArgs = { ...QuestionCreateArgs, id: nullable(intArg()) };
 
 export const Question = objectType({
 	name: "Question",
@@ -44,7 +33,7 @@ export const Question = objectType({
 		t.nullable.string("media");
 		t.nullable.int("creator_id");
 		t.nullable.field("status", { type: "Status" });
-		t.nullable.field("privact", { type: "Privacy" });
+		t.nullable.field("privacy", { type: "Privacy" });
 		t.nullable.field("creator", {
 			type: "User",
 			resolve(_parent, args, context) {
@@ -161,15 +150,15 @@ export const questionQuery = extendType({
 export const questionMutation = extendType({
 	type: "Mutation",
 	definition(t) {
-		t.field("addQuestion", {
+		t.field("createQuestion", {
 			type: Question,
-			args: QuestionCreateInputs,
+			args: QuestionCreateArgs,
 			// validate: ({ string }) => ({
 			// 	text: string().min(30),
 			// }),
 
 			resolve(_parent, { options, ...rest }, context) {
-				const creationData: Prisma.QuestionUncheckedCreateInput = {
+				const creationData: Prisma.QuestionCreateInput = {
 					...rest,
 					options: {
 						createMany: {
@@ -188,7 +177,7 @@ export const questionMutation = extendType({
 
 		t.field("updateQuestion", {
 			type: Question,
-			args: QuestionUpdateInputs,
+			args: QuestionUpdateArgs,
 			resolve(_parent, args, context) {
 				const id = args.id as number;
 				delete args.id;
@@ -196,7 +185,7 @@ export const questionMutation = extendType({
 					where: {
 						id,
 					},
-					data: args as QuestionPrisma,
+					data: args as Prisma.QuestionUpdateInput,
 				});
 			},
 		});
