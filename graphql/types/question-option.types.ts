@@ -7,27 +7,17 @@ export const QuestionOptionCreateInputs = inputObjectType({
 		t.nonNull.string("text");
 		t.nullable.string("media");
 		t.nullable.boolean("correct");
-		t.nonNull.int("question_id");
 	},
 });
 
-// export const QuestionOptionCreateInputs = {
-// 	text: nonNull(stringArg()),
-// 	media: nullable(stringArg()),
-// 	correct: nullable(booleanArg()),
-// 	question_id: nonNull(intArg()),
-// };
+const QuestionOptionCreateArgs = {
+	text: nonNull(stringArg()),
+	media: nullable(stringArg()),
+	correct: nullable(booleanArg()),
+	question_id: nonNull(intArg()),
+};
 
-// const QuestionOptionUpdateInputs = { ...QuestionOptionCreateInputs, id: nonNull(intArg()) };
-export const QuesitonOptionUpdateInputs = inputObjectType({
-	name: "QuestionOptionUpdateInputs",
-	definition(t) {
-		t.nullable.int("id");
-		t.nullable.string("media");
-		t.nonNull.boolean("correct");
-		t.nonNull.int("question_id");
-	},
-});
+const QuestionOptionUpdateArgs = { ...QuestionOptionCreateArgs, id: nonNull(intArg()) };
 
 export const QuestionOption = objectType({
 	name: "QuestionOption",
@@ -74,29 +64,23 @@ export const questionOptionMutation = extendType({
 	definition(t) {
 		t.field("addQuestionOption", {
 			type: "QuestionOption",
-			args: {
-				data: QuestionOptionCreateInputs
-			},
+			args: QuestionOptionCreateArgs,
 			resolve(_parent, args, context) {
 				console.log(args);
 				return context.prisma.questionOption.create({
-					data: args.data as Prisma.QuestionOptionUncheckedCreateInput,
+					data: args as Prisma.QuestionOptionUncheckedCreateInput,
 				});
 			},
 		});
 		t.field("updateQuestionOption", {
 			type: "QuestionOption",
-			args: {
-				data: QuesitonOptionUpdateInputs,
-			},
+			args: QuestionOptionUpdateArgs,
 			resolve(_parent, args, context) {
-				const id = args.data.id as number;
-				delete args.data.id;
 				return context.prisma.questionOption.update({
 					where: {
-						id,
+						id: args.id,
 					},
-					data: args.data as Prisma.QuestionOptionUncheckedUpdateInput,
+					data: args as Prisma.QuestionOptionUncheckedUpdateInput,
 				});
 			},
 		});

@@ -11,12 +11,10 @@
     "start": "next start",
     "lint": "next lint",
     "generate": "ts-node --transpile-only graphql/schema",
-    "test": "jest",
-    "test-server": "dotenv -e .env.test npm run dev",
+    "test": "npm run generate && yarn docker:up && yarn dotenv -e .env.test prisma db push && dotenv -e .env.test --maxWorkers 2 jest -i",
     "test-watch": "jest --watch",
     "docker:up": "docker-compose up -d",
-    "docker:down": "docker-compose down",
-    "test-database": "npm run generate && yarn docker:up && yarn dotenv -e .env.test prisma db push && dotenv -e .env.test --maxWorkers 2 jest -i"
+    "docker:down": "docker-compose down"
   },
   "dependencies": {
     "@apollo/client": "^3.6.9",

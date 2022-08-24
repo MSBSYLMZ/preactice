@@ -1,29 +1,56 @@
 import { createTestContext } from "../__helpers";
+import { questionCreateMutation, questionCreateMutationsWithoutOptions } from "./question.mutations";
 
 const ctx = createTestContext();
 
-it("ensures that a question can be created", async () => {
-	const result = await ctx.client.request(
-		`
-      mutation createUser($username: String!, $firstName: String!, $lastName: String!, $password: String!) {
-        createUser(username: $username, first_name: $firstName, last_name: $lastName, password: $password) {
-          username
-          first_name
-          last_name
-          password
-        }
-      }
-  `,
-		{ username: "another 2", firstName: "first", lastName: "last", password: "password" },
-	);
-	expect(result).toMatchInlineSnapshot(`
-    Object {
-      "createUser": Object {
-        "first_name": "first",
-        "last_name": "last",
-        "password": "password",
-        "username": "another 2",
-      },
-    }
-`);
+const questionCreateInputsWithoutOptions = {
+	text: "Some kind of a question",
+};
+
+const questionCreateInputs = {
+	...questionCreateInputsWithoutOptions,
+	options: [
+		{
+			text: "The right answer",
+			correct: true,
+		},
+		{
+			text: "The wrong answer",
+			correct: false,
+		},
+	],
+};
+
+describe("Question Crud", () => {
+	it("Question needs options", async () => {
+		const result = await ctx.client.request(questionCreateMutation, questionCreateInputs);
+		console.log(result);
+    expect(2).toEqual(2)
+	});
+
+	// 	it("Ensures that a question can be deleted", async () => {
+	// 		const result = await ctx.client.request(
+	// 			`
+	//       mutation deleteUser($id: Int!) {
+	//         createUser() {
+	//           username
+	//           first_name
+	//           last_name
+	//           password
+	//         }
+	//       }
+	//   `,
+	// 			{ username: "another 2", firstName: "first", lastName: "last", password: "password" },
+	// 		);
+	// 		expect(result).toMatchInlineSnapshot(`
+	//     Object {
+	//       "createUser": Object {
+	//         "first_name": "first",
+	//         "last_name": "last",
+	//         "password": "password",
+	//         "username": "another 2",
+	//       },
+	//     }
+	// `);
+	// 	});
 });
