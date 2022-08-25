@@ -1,3 +1,4 @@
+import { Prisma } from "@prisma/client";
 import { objectType, queryType, list, mutationType, nullable, nonNull, stringArg, makeSchema, intArg, extendType } from "nexus";
 
 const UserCreateInputs = {
@@ -25,6 +26,16 @@ export const User = objectType({
 		t.nullable.string("bio");
 		t.nullable.string("profile_photo");
 		t.nullable.field("date_of_birth", { type: "Date" });
+		t.field("gallery", {
+			type: "Gallery",
+			resolve(_parent, args, context) {
+				return context.prisma.gallery.findUnique({
+					where: {
+						owner_id: _parent.id,
+					},
+				});
+			},
+		});
 		t.field("questions", {
 			type: list("Question"),
 			resolve(_parent, args, context) {
@@ -70,7 +81,17 @@ export const userMutation = extendType({
 			type: User,
 			args: UserCreateInputs,
 			resolve(_parent, args, context) {
-				return context.prisma.user.create({ data: args });
+				return context.prisma.user.create({
+					data: {
+						...args,
+						gallery: {
+							create:{}
+						}
+					},
+					include: {
+						gallery: true,
+					},
+				});
 			},
 		});
 	},

@@ -29,7 +29,7 @@ type Mutation {
   deleteQuestion(id: Int!): Question
   deleteQuestionOption(id: Int!): QuestionOption
   updateClassroom(creator_id: Int, description: String, id: Int!, name: String, privacy: String): Classroom
-  updateQuestion(creator_id: Int, id: Int, media: String, options: [QuestionOptionCreateInputs]!, privacy: Privacy! = private, status: Status = pending, text: String!): Question
+  updateQuestion(creator_id: Int, id: Int!, media: String, privacy: Privacy! = private, status: Status = pending, text: String): Question
   updateQuestionOption(correct: Boolean, id: Int!, media: String, question_id: Int!, text: String!): QuestionOption
 }
 
@@ -88,6 +88,7 @@ type User {
   date_of_birth: Date
   email: String
   first_name: String!
+  gallery: Gallery
   id: Int!
   last_name: String!
   password: String!

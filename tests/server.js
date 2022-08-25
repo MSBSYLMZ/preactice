@@ -29,6 +29,7 @@ const apolloServer = new ApolloServer({
 	schema,
 	context: { prisma },
 });
+const startServer =  apolloServer.start();
 
 // const apolloServer = new ApolloServer({
 // 	schema,
@@ -39,7 +40,7 @@ const handler = cors(async function handler(req, res) {
 		res.end();
 		return false;
 	}
-	await apolloServer.start();
+	await startServer;
 	await apolloServer.createHandler({ path: "/api/graphql" })(req, res);
 });
 module.exports = { server, app };

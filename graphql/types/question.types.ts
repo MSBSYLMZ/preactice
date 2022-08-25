@@ -23,7 +23,8 @@ const QuestionCreateArgs = {
 	}),
 };
 
-const QuestionUpdateArgs = { ...QuestionCreateArgs, id: nullable(intArg()) };
+const { options, text, ...updateArgs } = QuestionCreateArgs;
+const QuestionUpdateArgs = { ...updateArgs, id: nonNull(intArg()), text: nullable(stringArg()) };
 
 export const Question = objectType({
 	name: "Question",
@@ -180,12 +181,14 @@ export const questionMutation = extendType({
 			args: QuestionUpdateArgs,
 			resolve(_parent, args, context) {
 				const id = args.id as number;
-				delete args.id;
 				return context.prisma.question.update({
 					where: {
 						id,
 					},
 					data: args as Prisma.QuestionUpdateInput,
+					include: {
+						options: true,
+					},
 				});
 			},
 		});

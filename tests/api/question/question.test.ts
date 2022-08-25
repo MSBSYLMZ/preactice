@@ -1,5 +1,6 @@
 import { createTestContext } from "../__helpers";
-import { questionCreateMutation, questionCreateMutationsWithoutOptions } from "./question.mutations";
+import { questionCreateMutation, questionDeleteMutation, questionUpdateMutation } from "./question.mutations";
+import { getAllQuestions, getQuestionById } from "./question.queries";
 
 const ctx = createTestContext();
 
@@ -22,35 +23,37 @@ const questionCreateInputs = {
 };
 
 describe("Question Crud", () => {
-	it("Question needs options", async () => {
-		const result = await ctx.client.request(questionCreateMutation, questionCreateInputs);
-		console.log(result);
-    expect(2).toEqual(2)
+	it("Create question with options", async () => {
+		const created = await ctx.client.request(questionCreateMutation, questionCreateInputs);
+		expect(created.createQuestion).toMatchObject(questionCreateInputs);
 	});
 
-	// 	it("Ensures that a question can be deleted", async () => {
-	// 		const result = await ctx.client.request(
-	// 			`
-	//       mutation deleteUser($id: Int!) {
-	//         createUser() {
-	//           username
-	//           first_name
-	//           last_name
-	//           password
-	//         }
-	//       }
-	//   `,
-	// 			{ username: "another 2", firstName: "first", lastName: "last", password: "password" },
-	// 		);
-	// 		expect(result).toMatchInlineSnapshot(`
-	//     Object {
-	//       "createUser": Object {
-	//         "first_name": "first",
-	//         "last_name": "last",
-	//         "password": "password",
-	//         "username": "another 2",
-	//       },
-	//     }
-	// `);
-	// 	});
+	it("Ensures wrong privacy field is not accepted", async () => {
+		const createCall = ctx.client.request(questionCreateMutation, { ...questionCreateInputs, privacy: "hello" });
+		expect(createCall).rejects.toThrow();
+	});
+
+	it("Ensures wrong status field is not accepted", async () => {
+		const createCall = ctx.client.request(questionCreateMutation, { ...questionCreateInputs, status: "hello" });
+		expect(createCall).rejects.toThrow()
+	});
+
+	it("Update question", async () => {
+		const allQuestions = await ctx.client.request(getAllQuestions);
+		const latestId = allQuestions.questions.at(-1).id;
+		const updateValues = { text: "Changed text", id: latestId };
+		const updated = await ctx.client.request(questionUpdateMutation, updateValues);
+		expect(updated.updateQuestion).toMatchObject({ ...questionCreateInputs, ...updateValues });
+	});
+
+	it("Delete question", async () => {
+		const allQuestions = await ctx.client.request(getAllQuestions);
+		const firstElement = allQuestions.questions[0];
+		const firstId = firstElement.id;
+		const deleted = await ctx.client.request(questionDeleteMutation, { id: firstId });
+		const findDeleted = await ctx.client.request(getQuestionById, { questionId: firstId });
+
+		expect(firstElement).toMatchObject(deleted.deleteQuestion);
+		expect(findDeleted).toMatchObject({ question: null });
+	});
 });
