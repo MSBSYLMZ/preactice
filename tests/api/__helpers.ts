@@ -11,7 +11,7 @@ export function createTestContext(): TestContext {
 	let ctx = {} as TestContext;
 	const graphqlCtx = graphqlTestContext();
 
-	beforeEach(async () => {
+	beforeAll(async () => {
 		const client = await graphqlCtx.before();
 		Object.assign(ctx, {
 			client,
@@ -29,7 +29,7 @@ function graphqlTestContext() {
 	return {
 		async before() {
 			const port = 4000;
-			serverInstance = await server.listen({ port });
+			serverInstance = server.listen({ port });
 
 			return new GraphQLClient(`http://localhost:${port}/api/graphql`);
 		},

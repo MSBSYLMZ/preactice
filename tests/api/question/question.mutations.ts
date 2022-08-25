@@ -1,16 +1,19 @@
 export const questionCreateMutation = `
-
-    mutation addQuestion($text: String!, $options: [QuestionOptionCreateInputs]) {
+mutation Mutation($text: String!, $options: [QuestionOptionCreateInputs]!, $media: String, $status: Status, $privacy: Privacy) {
+    createQuestion(text: $text, options: $options, media: $media, status: $status, privacy: $privacy) {
+      id
+      text
+      media
+      creator_id
+      status
+      privacy
+      options {
         text
+        correct
         media
-        creator_id
-        status
-        privacy
-        options {
-            text
-            correct
-        }
-    }`;
+      }
+    }
+  }`;
 
 export const questionCreateMutationsWithoutOptions = `
     mutation Mutation($text: String!) {
@@ -23,21 +26,37 @@ export const questionCreateMutationsWithoutOptions = `
     }`;
 
 export const questionUpdateMutation = `
-    mutation Mutation($text: String!) {
-        updateQuestion(text: $text) {
+    mutation Mutation($id:Int!, $text: String, $creatorId: Int, $status:Status, $privacy:Privacy, $media: String) {
+        updateQuestion(id: $id, text: $text, creator_id: $creatorId, status: $status, privacy: $privacy, media: $media ) {
+            id
             text
             media
             creator_id
             status
             privacy
-}`;
+            options {
+                text
+                correct
+                media
+              }
+        }
+    }`;
 
 export const questionDeleteMutation = `
     mutation Mutation($id: Int!) {
         deleteQuestion(id: $id) {
-            text
-            media
-            creator_id
-            status
-            privacy
+          id
+          text
+          creator_id
+          media
+          status
+          privacy
+          options {
+              text
+              media
+              correct
+              question_id
+              id
+          }
+            }
     }`;
