@@ -2,8 +2,10 @@ import { makeSchema } from "nexus";
 import * as types from "./types";
 import { validatePlugin } from "nexus-validate";
 import { join } from "path";
+import { applyMiddleware } from "graphql-middleware";
+import { permissions } from "./permissions";
 
-const schema = makeSchema({
+const baseSchema = makeSchema({
 	types,
 	outputs: {
 		typegen: join(process.cwd(), "node_modules", "@types", "nexus-typegen", "index.d.ts"),
@@ -15,5 +17,7 @@ const schema = makeSchema({
 	},
 	plugins: [validatePlugin()],
 });
+
+const schema = applyMiddleware(baseSchema, permissions.generate(baseSchema));
 
 export default schema;
