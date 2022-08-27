@@ -1,4 +1,3 @@
-import { SvgIconComponent } from "@mui/icons-material";
 import { ButtonHTMLAttributes, forwardRef, FunctionComponent, ReactNode } from "react";
 import Button from "../basics/button";
 
@@ -11,11 +10,11 @@ const IntroButton: FunctionComponent<IntroButtonProps> = forwardRef((props: Intr
 	const { icon, children = null, ...otherProps } = props;
 	return (
 		<Button
-			className="w-full sm:w-80 pt-4 px-6 h-16 hover:bg-gray hover:text-black bg-navy-blue text-white my-5 flex justify-center text-center"
+			className="w-full sm:w-80 pt-4 px-6 h-16 relative hover:bg-gray hover:text-black bg-navy-blue text-white my-5 flex justify-center text-center"
 			{...otherProps}>
 			<>
 				{icon && icon}
-				<p>{children}</p>
+				{children}
 			</>
 		</Button>
 	);

@@ -1,19 +1,20 @@
-import { Groups } from "@mui/icons-material";
-import PsychologyIcon from "@mui/icons-material/Psychology";
 import IntroButton from "./intro-button";
+import MenuIcon from "@icons/Menu.icon";
 import Link from "next/link";
 import styles from "./intro.module.css";
+import WorldIcon from "@icons/World.icon";
+import UsersIcon from "@icons/Users.icon";
 
 const buttonInfos = [
 	{
 		href: "/practice",
 		text: "Practice",
-		icon: <PsychologyIcon className="text-3xl mr-3" />,
+		icon: <WorldIcon className="mr-4" />,
 	},
 	{
 		href: "/multiplayer",
 		text: "Multiplayer",
-		icon: <Groups className="text-3xl mr-3" />,
+		icon: <UsersIcon className="mr-4" />,
 	},
 	{
 		href: "/custom-practice",
