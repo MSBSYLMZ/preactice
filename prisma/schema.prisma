@@ -21,13 +21,13 @@ enum Status {
 
 model User {
   id                Int         @id @default(autoincrement())
-  username          String      @unique
-  first_name        String      @db.VarChar(50)
-  last_name         String      @db.VarChar(50)
-  password          String      @db.VarChar(255)
-  email             String?     @db.VarChar(255)
+  username          String?      @unique
+  name        String      @db.VarChar(50)
+  password          String?      @db.VarChar(255)
+  email             String  @unique 
+  emailVerified DateTime?
   date_of_birth     DateTime?   @db.Date
-  profile_photo     String?     @db.Text
+  image     String?     @db.Text
   bio               String?     @db.Text
   questions         Question[]
   puzzle_images     PuzzleImg[]
@@ -40,8 +40,8 @@ model User {
 }
 
 model Account {
-  id                String  @id @default(cuid())
-  user_id           Int
+  id                Int  @id @default(autoincrement())
+  userId           Int
   type              String
   provider          String
   providerAccountId String
@@ -52,17 +52,17 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-  user              User    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
 
 model Session {
-  id           String   @id @default(cuid())
+  id           Int   @id @default(autoincrement())
   sessionToken String   @unique
-  user_id       Int
+  userId       Int
   expires      DateTime
-  user         User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {

@@ -21,18 +21,18 @@ export const getQuestionById = `
 export const getAllQuestions = `
     query Query {
         questions {
-        id
-        text
-        creator_id
-        media
-        status
-        privacy
-        options {
-            text
-            media
-            correct
-            question_id
             id
-        }
+            text
+            creator_id
+            media
+            status
+            privacy
+            options {
+                text
+                media
+                correct
+                question_id
+                id
+            }
         }
     }`;
