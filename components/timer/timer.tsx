@@ -14,7 +14,7 @@ const Timer = ({ question }: TimerProps) => {
 	const timerBegin = useReactiveVar(questionVar).timerBegin;
 	const game = useReactiveVar(gameVar);
 	const [timerCount, setTimerCount] = useState<number>(timerBegin);
-	const [activeAnimation, setActiveAnimation] = useState({ animation: `animateTimerBar ${timerBegin}s linear 0s 1` });
+	const [activeAnimation, setActiveAnimation] = useState({ animation: `${styles.animateTimerBar} ${timerBegin}s linear 0s 1` });
 
 	const [intervalId, setIntervalId] = useState<string | number | null>(null);
 

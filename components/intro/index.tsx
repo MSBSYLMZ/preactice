@@ -1,9 +1,9 @@
 import IntroButton from "./intro-button";
-import MenuIcon from "@icons/Menu.icon";
+import MenuIcon from "@icons/menu.icon";
 import Link from "next/link";
 import styles from "./intro.module.css";
-import WorldIcon from "@icons/World.icon";
-import UsersIcon from "@icons/Users.icon";
+import WorldIcon from "@icons/world.icon";
+import UsersIcon from "@icons/users.icon";
 
 const buttonInfos = [
 	{
