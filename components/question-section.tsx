@@ -1,6 +1,7 @@
 import Timer from "./timer/timer";
 import QuestionOption from "./question-option/question-option";
 import Question from "./question";
+import Button from "./basics/button";
 import { useState, useEffect, useLayoutEffect, useRef } from "react";
 
 import useGame from "@hooks/useGame";
@@ -47,7 +48,7 @@ const QuestionSection = () => {
 		questionVar({ ...questionVar(), correctAnswer });
 		setQuestion(question.text);
 		setOptions(options);
-		setQuestionIndex(questionIndex + 1)
+		setQuestionIndex(questionIndex + 1);
 	};
 
 	useEffect(() => {
@@ -82,19 +83,22 @@ const QuestionSection = () => {
 	// }, [question]);
 	console.log(correctAnswer, questions);
 	return (
-		<div className="question-section">
-			<div className="flex-container">
-				<button onClick={handleRestart} style={{ margin: "18px 0" }}>
+		<div className="w-5/12 m-10 mt-4">
+			<div className="flex justify-between">
+				<Button className="my-10 mx-0 bg-blue-700" onClick={handleRestart} style={{ margin: "18px 0" }}>
 					RESTART
-				</button>
+				</Button>
 			</div>
 			<Timer question={question}></Timer>
-			<div className="questions">
+			<div className="border-4 border-solid bg-black border-orange w-full text-white shadow-md p-5">
 				<Question>{question}</Question>
 				{options ? options.map((item: string, index) => <QuestionOption key={index} value={item} item={item}></QuestionOption>) : null}
-				<button className="text-black" ref={applyButton} onClick={handleApply}>
+				<div className="flex justify-between">
+					<div></div>
+				<Button className="text-black bg-purple" ref={applyButton} onClick={handleApply}>
 					Apply
-				</button>
+				</Button>
+				</div>
 			</div>
 		</div>
 	);

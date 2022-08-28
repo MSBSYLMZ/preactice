@@ -5,8 +5,8 @@ interface QuestionProps {
 const Question = ({ children }: QuestionProps) => {
 	return (
 		<div>
-			<h4 className="question-title">Choose the right option</h4>
-			<h2 className="question"> {children}</h2>
+			<h4 className="text-3xl text-red">Choose the right option</h4>
+			<h2 className="text-4xl my-2"> {children}</h2>
 		</div>
 	);
 };

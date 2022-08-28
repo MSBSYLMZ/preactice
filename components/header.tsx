@@ -1,14 +1,13 @@
-import MenuIcon from "@icons/Menu.icon";
+import MenuIcon from "@icons/menu.icon";
 import Link from "next/link";
 import SearchBar from "./search-bar";
 import { useSession, signOut, signIn } from "next-auth/react";
 
 function Header() {
 	const { data: session, status } = useSession();
-	console.log(session);
 
 	return (
-		<div className="flex justify-between  h-16 p-4 md:px-10 bg-navy-blue fixed w-full  top-0 border-1 md:flex-row flex-row text-white">
+		<header className="flex justify-between  h-16 p-4 md:px-10 bg-navy-blue fixed z-50 w-full  top-0 border-1 md:flex-row flex-row text-white">
 			<Link href="/">
 				<div className="w-24 text-3xl font-bold cursor-pointer">preactice</div>
 			</Link>
@@ -36,7 +35,7 @@ function Header() {
 					Sign In
 				</button>
 			)}
-		</div>
+		</header>
 	);
 }
 
