@@ -6,12 +6,14 @@ import { ApolloProvider } from "@apollo/client";
 import apolloClient from "../lib/apollo";
 import { SessionProvider } from "next-auth/react";
 import ChatBar from "@components/message/chat-bar";
+import Alert from "@components/alert";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 	return (
 		<SessionProvider session={session}>
 			<ApolloProvider client={apolloClient}>
 				<Header />
+				<Alert/>
 				<ChatBar hideChatBar={true} />
 				<Component {...pageProps} />
 			</ApolloProvider>
