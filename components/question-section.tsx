@@ -88,6 +88,14 @@ const QuestionSection = () => {
 				<Button className="my-10 mx-0 bg-blue-700" onClick={handleRestart} style={{ margin: "18px 0" }}>
 					RESTART
 				</Button>
+				<Button
+					className="my-10 mx-0 bg-blue-700"
+					onClick={() => {
+						gameHook.success();
+					}}
+					style={{ margin: "18px 0" }}>
+					RESTART
+				</Button>
 			</div>
 			<Timer question={question}></Timer>
 			<div className="border-4 border-solid bg-black border-orange w-full text-white shadow-md p-5">
@@ -95,9 +103,9 @@ const QuestionSection = () => {
 				{options ? options.map((item: string, index) => <QuestionOption key={index} value={item} item={item}></QuestionOption>) : null}
 				<div className="flex justify-between">
 					<div></div>
-				<Button className="text-black bg-purple" ref={applyButton} onClick={handleApply}>
-					Apply
-				</Button>
+					<Button className="text-black bg-purple" ref={applyButton} onClick={handleApply}>
+						Apply
+					</Button>
 				</div>
 			</div>
 		</div>
