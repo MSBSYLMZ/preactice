@@ -1,5 +1,6 @@
 import { makeVar } from "@apollo/client";
 import Error from "next/error";
+import { IAlertButton } from "interfaces";
 
 interface PuzzleVar {
 	addedPiecesCount: number;
@@ -20,9 +21,13 @@ interface GameVar {
 	newGame: boolean;
 	success: boolean;
 	gameover: boolean;
-	showMessage: boolean;
-	message: string;
-	messageType: string;
+}
+
+interface IAlertVar {
+	showAlert: boolean;
+	alertMessage: string;
+	alertType: string;
+	alertButtons: IAlertButton[] | [];
 }
 
 export const puzzleVar = makeVar<PuzzleVar>({
@@ -44,7 +49,11 @@ export const gameVar = makeVar<GameVar>({
 	newGame: true,
 	success: false,
 	gameover: false,
-	message: "",
-	messageType: "info",
-	showMessage: false,
+});
+
+export const alertVar = makeVar<IAlertVar>({
+	showAlert: false,
+	alertMessage: "",
+	alertType: "info",
+	alertButtons: [],
 });

@@ -3,9 +3,12 @@ import { useCallback } from "react";
 import { clearCanvas } from "utils/canvas";
 import { useReactiveVar } from "@apollo/client";
 import { puzzleVar, gameVar, questionVar } from "apollo-client/reactive-variables";
+import useAlert from "./useAlert";
+import { IAlertButton } from "interfaces";
 
 function useGame() {
 	const puzzle = useReactiveVar(puzzleVar);
+	const alert = useAlert();
 	// const currentUser =
 
 	// const dispatch = useDispatch();
@@ -40,31 +43,33 @@ function useGame() {
 		});
 		gameVar({
 			...gameVar(),
-			showMessage: false,
 			gameover: false,
 			success: false,
 			newGame: true,
 		});
+		alert.hideAlert();
 	}, [ctx]);
 
 	const gameOver = useCallback((message = DEFAULT_GAMEOVER_MESSAGE) => {
+		const alertButtons: IAlertButton[] = [
+			{
+				onClick: restart,
+				text: "Restart",
+			},
+		];
+		alert.alert(message, "fail", alertButtons);
 		gameVar({
 			...gameVar(),
 			gameover: true,
 			success: false,
-			showMessage: true,
-			message,
-			messageType: "fail",
 		});
 	}, []);
 	const success = useCallback((message = DEFAULT_SUCCESS_MESSAGE) => {
+		alert.alert(message, "success");
 		gameVar({
 			...gameVar(),
 			gameover: true,
 			success: true,
-			showMessage: true,
-			message,
-			messageType: "Success",
 		});
 	}, []);
 

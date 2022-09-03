@@ -20,7 +20,6 @@ const SinglePlayer: NextPage = () => {
 	}
 	return (
 		<div className="flex py-24 justify-evenly w-full bg-purple-600">
-			{game.showMessage ? <div>HERE should be a message</div> : null}
 			<QuestionSection></QuestionSection>
 			<Puzzle></Puzzle>
 		</div>

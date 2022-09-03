@@ -1,4 +1,5 @@
 import { PrismaClient, Prisma } from "@prisma/client";
+import { MouseEventHandler } from "react";
 
 export interface Props {
 	className?: string;
@@ -17,3 +18,8 @@ export interface QuestionType {
 	};
 }
 
+export interface IAlertButton {
+	onClick: MouseEventHandler<HTMLButtonElement>;
+	text: string;
+	className: string;
+}
