@@ -51,7 +51,7 @@ function Chat() {
 	return (
 		<div>
 			<ChatBar hideChatBar={true} />
-			<div className="fixed flex justify-end flex-row-reverse right-96 bottom-0  z-50">{chatTabs}</div>
+			<div className="fixed flex justify-end flex-row-reverse right-96 bottom-0 z-50">{chatTabs}</div>
 		</div>
 	);
 }
