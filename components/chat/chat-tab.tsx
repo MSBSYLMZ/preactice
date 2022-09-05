@@ -1,5 +1,6 @@
 import ExtendableTextarea from "@components/basics/extendable-textarea";
-import { ComponentProps, FunctionComponent } from "react";
+import usePusher from "@hooks/usePusher";
+import { ComponentProps, FunctionComponent, useState } from "react";
 import ChatMessage from "./chat-message";
 
 interface IMessage {
@@ -18,9 +19,20 @@ interface IChatTab extends ComponentProps<FunctionComponent> {
 
 function ChatTab(props: IChatTab) {
 	const { user, messages, index, closeTab } = props;
+	const pusher = usePusher();
+	const [message, setMessage] = useState<string>('');
 
 	const close = () => {
 		closeTab(index);
+	};
+
+	const handleChange = (msg: string) => {
+		setMessage(msg);
+	};
+
+	const handleSendMessage = () => {
+		console.log(message);
+		pusher.sendMessage(message,1);
 	};
 	const hell = messages.concat(messages, messages, messages, messages);
 	const hll = hell.concat(hell, hell, hell);
@@ -35,10 +47,16 @@ function ChatTab(props: IChatTab) {
 				</div>
 				<div>{user.name}</div>
 			</div>
-			<div className="w-full h-64 relative overflow-y-auto mb-auto max-h-80 h-64 flex flex-col-reverse flex-grow flex-shrink-0 basis-0">
+			<div className="w-full h-64 relative overflow-y-auto mb-auto max-h-80 max-h-64 flex flex-col-reverse flex-grow flex-shrink-0 basis-0">
 				{messageElements}
 			</div>
-			<ExtendableTextarea className="relative max-h-24 resize-none flex  flex-grow-0 flex-shrink-0 basis-auto" />
+			<ExtendableTextarea
+				className="relative -top-8 max-h-24 resize-none flex  flex-grow-0 flex-shrink-0 basis-auto"
+				handleChange= {handleChange}
+			/>
+			<button className="h-4 relative -top-4" onClick={handleSendMessage}>
+				send
+			</button>
 		</div>
 	);
 }
