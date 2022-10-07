@@ -12,6 +12,7 @@
     "lint": "next lint",
     "generate": "ts-node --transpile-only graphql/schema",
     "test": "npm run generate && yarn docker:up && yarn dotenv -e .env.test prisma db push && dotenv -e .env.test --maxWorkers 2 jest -i",
+    "test-another": "yarn docker:up && set NODE_ENV=test npm run dev && prisma db push && jest-i",
     "test-watch": "jest --watch",
     "docker:up": "docker-compose up -d",
     "docker:down": "docker-compose down"
