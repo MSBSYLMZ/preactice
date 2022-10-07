@@ -5,6 +5,7 @@ import Header from "../components/header";
 import { ApolloProvider } from "@apollo/client";
 import apolloClient from "../lib/apollo";
 import { SessionProvider } from "next-auth/react";
+import Chat from "@components/chat/chat";
 import Alert from "@components/alert";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
@@ -13,6 +14,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 			<ApolloProvider client={apolloClient}>
 				<Header />
 				<Alert />
+				<Chat />
 				<Component {...pageProps} />
 			</ApolloProvider>
 		</SessionProvider>
