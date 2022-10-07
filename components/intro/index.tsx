@@ -12,6 +12,11 @@ const buttonInfos = [
 		icon: <WorldIcon className="mr-4" />,
 	},
 	{
+		href: "/multiplayer",
+		text: "Multiplayer",
+		icon: <UsersIcon className="mr-4" />,
+	},
+	{
 		href: "/custom-practice",
 		text: "Custom Practice",
 	},
